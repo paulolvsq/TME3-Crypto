@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import math
 def pgcd(a, b):
     """pgcd(a,b): calcul du 'Plus Grand Commun Diviseur' entre les 2 nombres entiers a et b"""
     if b==0:
@@ -59,12 +60,17 @@ print("\n")
 print("Test indicateur_euler :")  
 indicateur_euler(1000000)
 
-def exponentiation_modulaire(e, b, m):
-    if(b == 0):
-        return 1
+def exponentiation_modulaire(a,e,m):
+    if(e == 1):
+        res=a%m
     else:
-        res = pow(b, e)
-        return res%m
+        res = 1
+        
+    for i in range(m-1,0,-1):
+        res=res*(res%m)
+        if e==1:
+            res=(res*e)%m    
+    return res
 
 print("\n")
 print("Test exponentiation modulaire :")
@@ -84,27 +90,52 @@ def est_premier(n):
         return False
 
 def facteurs_premiers(n,liste):    
-    if(n==1):
-        print(liste)
+    if(est_premier(n)):
+        liste.append(n)
+        print("Liste finale : ",liste)
         return liste  
     else:
-        tmp, L = indicateur_euler(n)
+        print("n:",n)
         R = []
-        print(L)
-        for i in L:
+        for i in range(1, n+1):
             if est_premier(i):
-                R.append(i)
+                if(n%i==0):
+                    R.append(i)
+        
+        print("r: ",R)
+        print("r : ",R)
         taille=len(R)
-        print(R[taille-1])
         liste.append(R[taille-1])
-        return facteurs_premiers(n%R[taille-1],liste)
-        
-        
-        
-        
+        print("reste ; ",n//R[taille-1])
+        return facteurs_premiers(n//R[taille-1],liste)
+
 print("\n")
 print("\n") 
-facteurs_premiers(25,[])
+facteurs_premiers(498,[])
+
+
+
+def BSGS(n,alpha,beta):
+    m = math.sqrt(n)
+    liste=[]
+    for j in range(m+1):
+        alphabis=pow(alpha,j)
+        liste.append((j,alphabis))
+        
+    gsinv=exponentiation_modulaire(alpha,-m,n)
+    Y=beta
+    for i in range(m):
+        for i in liste:
+            a,b=i
+            if(Y==b):
+                return i*m+a; #a= le j
+            else:
+                Y=Y*gsinv
+
+    
+
+
+
                 
         
             
