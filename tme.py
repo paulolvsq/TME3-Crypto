@@ -27,7 +27,7 @@ def pgcdE(a,b):
         v1 = v
         r0 = r1
         r1 = r
-    print("\npgcd(", a, ",", b, ") =", r0, "\nValeur de u: ", u0, "\nValeur de v: ", v0);
+    #print("\npgcd(", a, ",", b, ") =", r0, "\nValeur de u: ", u0, "\nValeur de v: ", v0);
     return u0, v0
 
 print("Test pdcd Etendu")  
@@ -37,10 +37,12 @@ def inverse_modulaire(a, n):
     if(pgcd(a, n) == 1):
         u0, v0 = pgcdE(a, n)
         if(a*u0 + n*v0 == 1):
-            print("L'inverse modulaire de "+str(a)+" modulo n est : "+str(u0))
+            #print("L'inverse modulaire de "+str(a)+" modulo n est : "+str(u0))
+            if u0 < 0:
+                u0 += n
             return u0
-    print("L'inverse modulaire de "+str(a)+" n'existe pas modulo n")
-    return 
+    #print("L'inverse modulaire de "+str(a)+" n'existe pas modulo n")
+    return None 
 print("Test Inverse modulaire \n")  
 inverse_modulaire(1014, 5005)
 inverse_modulaire(59, 27)
@@ -160,7 +162,9 @@ def BSGS(n, alpha, beta):
     for i in range(m): #baby step
         ai = exponentiation_rapide(alpha, i, n)
         hashTable.append((i, exponentiation_rapide(alpha, i, n)))
-    alpha_m = pow(alpha, -m)
+    print(hashTable)
+    alpha_m = inverse_modulaire(alpha, n)
+    print(alpha_m)
     gamma = beta
     for i in range(m): #giant step
         for k in hashTable:
@@ -168,7 +172,7 @@ def BSGS(n, alpha, beta):
             if gamma == val:
                 return i*m + index
             else:
-                gamma = gamma*alpha_m
+                gamma = (gamma*alpha_m)%n
 
 """
 puissance negative -> truc tres petit -> probleme pour les calculs de alpha_m 
@@ -176,9 +180,9 @@ alpha_m sera un float proche de 0
 quand on multiplie gamma par alpha_m on trouve un truc tres petit aussi
 du coup gamma != val et on peut plus trouver le bon res dans la table de hash
 des la premiere iteration 
-comment faire ?
+comment faire ? -> inverse modulaire
 """ 
 print("\n")
 print("Test BSGS :")
-print("n = 77 alpha = 2 beta = 25 ")
-print(BSGS(77, 2, 25))
+print("n = 77 alpha = 2 beta = 8 ")
+print(BSGS(77, 2, 11))
