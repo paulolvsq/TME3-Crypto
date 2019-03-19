@@ -56,25 +56,9 @@ def indicateur_euler(n):
     print("Il y a "+str(cpt)+" nombres premier avec n entre 0 et n")
     return cpt, L 
 
-print("\n")
-print("Test indicateur_euler :")  
-indicateur_euler(1000000)
-
-def exponentiation_modulaire(a,e,m):
-    if(e == 1):
-        res=a%m
-    else:
-        res = 1
-        
-    for i in range(m-1,0,-1):
-        res=res*(res%m)
-        if e==1:
-            res=(res*e)%m    
-    return res
-
-print("\n")
-print("Test exponentiation modulaire :")
-print(exponentiation_modulaire(3,5,13))
+#print("\n")
+#print("Test indicateur_euler :")  
+#indicateur_euler(1000000)
 
 def nb_diviseurs(n):
     L = []
@@ -95,18 +79,18 @@ def facteurs_premiers(n,liste):
         print("Liste finale : ",liste)
         return liste  
     else:
-        print("n:",n)
+        #print("n:",n)
         R = []
         for i in range(1, n+1):
             if est_premier(i):
                 if(n%i==0):
                     R.append(i)
         
-        print("r: ",R)
-        print("r : ",R)
+        #print("r: ",R)
+        #print("r : ",R)
         taille=len(R)
         liste.append(R[taille-1])
-        print("reste ; ",n//R[taille-1])
+        #print("reste ; ",n//R[taille-1])
         return facteurs_premiers(n//R[taille-1],liste)
 
 print("\n")
@@ -114,30 +98,85 @@ print("\n")
 facteurs_premiers(498,[])
 
 
+def exponentiation_modulaire(a, e, n):
+    """
+    a : nombre 
+    e : exposant
+    m : modulo
+    """
+    if e == 1:
+        res = a%n
+    else:
+        res = 1
+    for i in range(e):
+        res = (res*a)%n
+    return res
 
-def BSGS(n,alpha,beta):
-    m = math.sqrt(n)
-    liste=[]
-    for j in range(m+1):
-        alphabis=pow(alpha,j)
-        liste.append((j,alphabis))
+print("\n")
+print("Test exponentiation modulaire :")
+print(exponentiation_modulaire(5, 3, 13))
+
+
+"""
+question a poser au prof
+pourquoi ce truc qui est dans le cours ne marche pas 
+pourquoi le mien qui est pas dans le cours marche
+exponentiation rapide puis res mod n a la fin ? ou alors puissance mod n a chaque appel
+if e == 1:
+        res = a%m
+    else:
+        res = 1
         
-    gsinv=exponentiation_modulaire(alpha,-m,n)
-    Y=beta
+    for i in range(m - 1, 0, -1):
+        res = (res*res)%m
+        if i == 1:
+            res = (res*a)%m    
+    return res
+"""
+
+def exponentiation_rapide(a, e, n):
+    if e == 0:
+        return 1
+    elif e == 1:
+        return a%n
+    elif e%2 == 0:
+        return exponentiation_rapide(a*a, e/2, n)%n
+    else:
+        return (a*exponentiation_rapide(a*a, (e-1)/2, n))%n
+    
+
+print("\n")
+print("Test exponentiation rapide :")
+print(exponentiation_rapide(2, 0, 77))
+
+def BSGS(n, alpha, beta):
+    """
+    n : ordre du groupe cyclique
+    alpha : generateur du groupe
+    beta : un element quelconque
+    """
+    m = (int) (math.sqrt(n) + 1)
+    print(m)
+    hashTable = []
+    for i in range(m): #baby step
+        ai = exponentiation_rapide(alpha, i, n)
+        print(ai)
+        hashTable.append((i, exponentiation_rapide(alpha, i, n)))
+    print(hashTable)
+    alpha_m = pow(alpha, -m)
+    print(alpha_m)
+    gamma = beta
     for i in range(m):
-        for i in liste:
-            a,b=i
-            if(Y==b):
-                return i*m+a; #a= le j
+        for k in hashTable:
+            index, val = k
+            if gamma == val:
+                print("coucou")
+                return i*m + index
             else:
-                Y=Y*gsinv
-
-    
+                gamma = gamma*alpha_m
 
 
-
-                
-        
-            
-        
-    
+print("\n")
+print("Test BSGS :")
+print("n = 77 alpha = 2 beta = 25 ")
+print(BSGS(77, 2, 25))
