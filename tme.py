@@ -156,26 +156,28 @@ def BSGS(n, alpha, beta):
     beta : un element quelconque
     """
     m = (int) (math.sqrt(n) + 1)
-    print(m)
     hashTable = []
     for i in range(m): #baby step
         ai = exponentiation_rapide(alpha, i, n)
-        print(ai)
         hashTable.append((i, exponentiation_rapide(alpha, i, n)))
-    print(hashTable)
     alpha_m = pow(alpha, -m)
-    print(alpha_m)
     gamma = beta
-    for i in range(m):
+    for i in range(m): #giant step
         for k in hashTable:
             index, val = k
             if gamma == val:
-                print("coucou")
                 return i*m + index
             else:
                 gamma = gamma*alpha_m
 
-
+"""
+puissance negative -> truc tres petit -> probleme pour les calculs de alpha_m 
+alpha_m sera un float proche de 0
+quand on multiplie gamma par alpha_m on trouve un truc tres petit aussi
+du coup gamma != val et on peut plus trouver le bon res dans la table de hash
+des la premiere iteration 
+comment faire ?
+""" 
 print("\n")
 print("Test BSGS :")
 print("n = 77 alpha = 2 beta = 25 ")
