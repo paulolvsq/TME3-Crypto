@@ -161,18 +161,27 @@ def BSGS(n, alpha, beta):
     hashTable = []
     for i in range(m): #baby step
         ai = exponentiation_rapide(alpha, i, n)
-        hashTable.append((i, exponentiation_rapide(alpha, i, n)))
-    print(hashTable)
-    alpha_m = inverse_modulaire(alpha, n)
-    print(alpha_m)
+        hashTable.append((i, ai))
+    #print(hashTable)
+    tmp = inverse_modulaire(alpha, n)
+    alpha_m = exponentiation_rapide(tmp, m, n)
+    #print("inverse :", alpha_m)
     gamma = beta
     for i in range(m): #giant step
         for k in hashTable:
             index, val = k
+            #print((int)(gamma))
+            #print("val",val)
             if gamma == val:
+                #print("gamma :", gamma)
+                #print("i :", i)
+                #print("index :", index)
+                #print("m :", m)
                 return i*m + index
-            else:
-                gamma = (gamma*alpha_m)%n
+        else:
+            gamma = (gamma*alpha_m)%n
+            
+
 
 """
 puissance negative -> truc tres petit -> probleme pour les calculs de alpha_m 
@@ -184,5 +193,38 @@ comment faire ? -> inverse modulaire
 """ 
 print("\n")
 print("Test BSGS :")
-print("n = 77 alpha = 2 beta = 8 ")
-print(BSGS(77, 2, 11))
+print("n = 3 alpha = 11 beta = 23")
+print(BSGS(4253, 7, 653))
+
+def f(x, h, n):
+    if x%3 == 0:
+        return h*x
+    elif x%3 == 1:
+        return n*x
+    else:
+        return x*x
+    
+def nextIter(x, a, b,p,h,n):  
+    
+    #newa
+    if a%3 == 0:
+        newa=(a+1)%p
+    elif a%3 == 1:
+        newa= a
+    else:
+        newa=(2-a)%p
+    #newb    
+    if b%3 == 0:
+        newb=(b+1)%p
+    elif b%3 == 1:
+        newb= b
+    else:
+        newb=(2-b)%p
+    #newx    
+    newx=f(x,h,n)
+
+    return(newx,newa,newb)      
+    
+def pollard(n):
+    pass
+    
